@@ -1,7 +1,8 @@
 const db = require("../modules/db");
 const https = require("https");
 const uuid = require('node-uuid')
-const { upPic } = require('../modules/upPic');
+const { upPic }  = require('../modules/upPic');
+
 module.exports.login = function(req,res){
     const { nickName, code, avatarUrl  } = req.body;
     https.get(`https://api.weixin.qq.com/sns/jscode2session?appid=wx9a7460cf1dcc24f5&secret=22618295300b4ecdeed42f65d81b9c3b&js_code=${code}&grant_type=authorization_code`,function(data){
@@ -74,37 +75,46 @@ module.exports.getLog = function(req,res){
 }
 
 module.exports.putLog = function(req,res){
-    const { xuexiao, question, xinghao, username, phone, type, pintai, status, files } = req.body;
-    if(type === 1){
-        db.insertOne('repaireLog',{
-            xuexiao,
-            createTime: Date.now(),
-            question,
-            xinghao,
-            username,
-            phone,
-            status
-        },(err,result)=>{
-            res.json({
-                ok: 1,
-                msg: "putlog success"
-            })
-        })
-    }
-    if(type === 2){
-        db.insertOne('repaireLog2',{
-            xuexiao,
-            createTime: Date.now(),
-            question,
-            xinghao,
-            username,
-            phone,
-            pintai
-        },(err,result)=>{
-            res.json({
-                ok: 1,
-                msg: "putlog2 success"
-            })
-        })
-    }
+    const { xuexiao, question, xinghao, username, phone, type, pintai, status } = req.body;
+    upPic(req,'img',function(obj){
+		if(obj.ok==1){
+            if(type/1 === 1){
+                db.insertOne('repaireLog',{
+                    xuexiao,
+                    createTime: Date.now(),
+                    question,
+                    xinghao,
+                    username,
+                    phone,
+                    status
+                },(err,result)=>{
+                    res.json({
+                        ok: 1,
+                        msg: "putlog success"
+                    })
+                })
+            }
+            if(type/1 === 2){
+                db.insertOne('repaireLog2',{
+                    xuexiao,
+                    createTime: Date.now(),
+                    question,
+                    xinghao,
+                    username,
+                    phone,
+                    pintai
+                },(err,result)=>{
+                    res.json({
+                        ok: 1,
+                        msg: "putlog2 success"
+                    })
+                })
+            }
+		}else{
+			res.json({
+				ok : 2,
+				msg : "添加失败"
+			})
+		}
+	})
 }

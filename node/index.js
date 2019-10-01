@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-
 const repaire = require('./router/repaire');
 
 app.use(express.static('./upload'))
@@ -16,9 +15,11 @@ app.all('*',function(req,res,next){
 
 // api interface
 app.get('/getRepaireLog',repaire.getLog);
-app.put('/putRepaireLog',repaire.putLog)
+app.put('/putRepaireLog',repaire.putLog);
+app.post('/login', repaire.login);
+app.post('/upload', repaire.upload);
 
 
 app.listen(80,function(){
-	console.log('succ')
+	console.log('succ in 80')
 })
